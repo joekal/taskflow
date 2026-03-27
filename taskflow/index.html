@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow | L'IA au service de votre productivité | Design Sombre</title>
+
+    <!-- Font Awesome and Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-body: #0a0e17; /* Fond sombre profond */
+            --bg-card: #151b29;  /* Fond des cartes légèrement plus clair */
+            --border: #232d41;  /* Couleur des bordures subtiles */
+            --text-main: #e2e8f0; /* Texte clair principal */
+            --text-muted: #94a3b8; /* Texte atténué */
+            
+            --primary: #3b82f6; /* Bleu vibrant */
+            --primary-dark: #1d4ed8;
+            --secondary: #a855f7; /* Violet pour le dégradé */
+            --white: #ffffff;
+            
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        ul { 
+            list-style: none; 
+        }
+        a { 
+            text-decoration: none; 
+            color: inherit; 
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            border-radius: 50px; /* Boutons plus arrondis */
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            /* Fond en dégradé ultra-vibrant */
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: #ffffff;
+            
+            /* L'effet "Allumé" : une ombre portée colorée et douce */
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+            
+            /* Une bordure très fine et claire pour détacher le bouton du fond noir */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-primary:hover {
+            /* Au survol, on augmente l'intensité lumineuse */
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.7);
+            transform: translateY(-4px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Effet de brillance (Glossy) qui passe sur le bouton au hover */
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn-primary:hover::after {
+            left: 120%;
+        }
+
+        section, header {
+            padding: 100px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- EFFET DE PARTICULES CSS --- */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-around 20s infinite linear;
+        }
+
+        @keyframes float-around {
+            0% { transform: translateY(0) translateX(0) scale(1); }
+            50% { transform: translateY(-50vh) translateX(50vw) scale(1.2); }
+            100% { transform: translateY(-100vh) translateX(-50vw) scale(1); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 23, 0.85); /* Fond transparent pour effet blur */
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 160px 0 120px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 strong {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 50px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- FEATURES --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            padding: 50px;
+            border-radius: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: var(--white);
+        }
+
+        /* --- PRICING --- */
+        .pricing {
+            background-color: rgba(21, 27, 41, 0.3);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            align-items: center;
+        }
+
+        .price-card {
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .price-card:hover {
+            transform: scale(1.03);
+        }
+
+        .price-card.popular {
+            border-color: var(--secondary);
+            transform: scale(1.08);
+            position: relative;
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .badge {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .price-val {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--white);
+            margin: 25px 0;
+            letter-spacing: -2px;
+        }
+
+        .price-val span {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .price-card ul {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .price-card li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+        }
+
+        .price-card li i { color: #10b981; }
+
+        /* --- TESTIMONIALS --- */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            font-style: italic;
+            transition: var(--transition);
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--text-muted);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 25px;
+            font-style: normal;
+        }
+
+        .user-info img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+        }
+
+        .stars { color: #f59e0b; margin-bottom: 15px; font-size: 1.1rem; }
+
+        /* --- CONTACT --- */
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 60px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background-color: var(--bg-body);
+            color: var(--white);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: rgba(10, 14, 23, 0.95);
+            color: var(--text-muted);
+            padding: 60px 0 30px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 10;
+        }
+
+        .social-links {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .social-links a {
+            font-size: 1.8rem;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .social-links a:hover {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .price-card.popular { transform: scale(1.02); }
+            .hero h1 { font-size: 4rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            section { padding: 70px 0; }
+            .section-title h2 { font-size: 2.5rem; }
+            .price-card.popular { transform: scale(1); }
+            .hero h1 { font-size: 3rem; }
+            .feature-card, .price-card, .testimonial-card { padding: 30px; }
+            .contact-container { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles-bg">
+        <div class="particle" style="width: 50px; height: 50px; top: 20%; left: 10%; animation-duration: 25s;"></div>
+        <div class="particle" style="width: 80px; height: 80px; top: 60%; left: 80%; animation-duration: 18s;"></div>
+        <div class="particle" style="width: 30px; height: 30px; top: 80%; left: 30%; animation-duration: 22s;"></div>
+        <div class="particle" style="width: 60px; height: 60px; top: 10%; left: 70%; animation-duration: 30s;"></div>
+        <div class="particle" style="width: 100px; height: 100px; top: 50%; left: 50%; animation-duration: 28s;"></div>
+    </div>
+
+    <nav>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <a href="#" class="logo">
+                <i class="fas fa-layer-group"></i> TaskFlow
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#testimonials">Avis</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#pricing" class="btn btn-primary">Essai Gratuit</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1>L'Intelligence Artificielle au service de votre <strong>Productivité</strong>.</h1>
+            <p>TaskFlow simplifie la gestion de projets pour les freelances et petites équipes. Boostez votre efficacité grâce à la priorisation automatique par l'IA.</p>
+            <div class="hero-btns">
+                <a href="#pricing" class="btn btn-primary">Commencer gratuitement</a>
+            </div>
+        </div>
+    </header>
+    <!-- End of Hero Section -->
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Outils Intelligents, Workflow Zen.</h2>
+                <p>Concentrez-vous sur votre métier, TaskFlow s'occupe de l'organisation.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot feature-icon"></i>
+                    <h3>Organisation Automatisée</h3>
+                    <p>Notre IA analyse vos échéances et priorise vos tâches pour maximiser votre productivité au quotidien.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-brain feature-icon"></i>
+                    <h3>Analyses Prédictives</h3>
+                    <p>Identifiez les goulots d'étranglement et anticipez les retards de vos projets avant qu'ils ne surviennent.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bolt feature-icon"></i>
+                    <h3>Collaboration Temps Réel</h3>
+                    <p>Fluidifiez la communication d'équipe avec un partage de documents et un chat intégré à vos projets.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Features Section -->
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Tarifs Simples, Aucune Surprise.</h2>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Gratuit</h3>
+                    <div class="price-val">0$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Jusqu'à 3 projets</li>
+                        <li><i class="fas fa-check"></i> 2 membres d'équipe</li>
+                        <li><i class="fas fa-check"></i> Tableaux de bord basiques</li>
+                        <li><i class="fas fa-check"></i> Stockage 1 Go</li>
+                    </ul>
+                    <button  class="btn" style="border: 1px solid var(--border); color: var(--text-muted); width: 100%;">Choisir ce plan</button>
+                </div>
+                <div class="price-card popular">
+                    <div class="badge">Recommandé</div>
+                    <h3>Pro</h3>
+                    <div class="price-val">19$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Projets illimités</li>
+                        <li><i class="fas fa-check"></i> Priorisation par IA</li>
+                        <li><i class="fas fa-check"></i> Rapports avancés</li>
+                        <li><i class="fas fa-check"></i> Stockage 10 Go</li>
+                        <li><i class="fas fa-check"></i> Support 24/7</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;">S'abonner maintenant</button>
+                </div>
+                <div class="price-card">
+                    <h3>Entreprise</h3>
+                    <div class="price-val">49$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Tout du plan Pro</li>
+                        <li><i class="fas fa-check"></i> Membres illimités</li>
+                        <li><i class="fas fa-check"></i> Support prioritaire</li>
+                        <li><i class="fas fa-check"></i> Stockage 100 Go</li>
+                        <li><i class="fas fa-check"></i> Intégration API</li>
+                    </ul>
+                    <button class="btn" style="border: 1px solid var(--border); color: var(--text-muted); width: 100%;">Contacter la vente</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Pricing Section -->
+
+    <!-- Testimonials Section -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Leurs projets, boostés par TaskFlow.</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"TaskFlow est une révélation ! L'IA m'aide à prioriser mes tâches, ce qui m'a fait gagner 5 heures par semaine."</p>
+                    <div class="user-info">
+                        <img src="https://i.pravatar.cc/150?u=joe" alt="Joe">
+                        <div>
+                            <strong>Joe K.</strong><br>
+                            <small>Freelance Developer</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Indispensable pour notre petite agence. La gestion de projets est fluide et l'analyse prédictive nous évite bien des soucis."</p>
+                    <div class="user-info">
+                        <img src="https://i.pravatar.cc/150?u=john" alt="John">
+                        <div>
+                            <strong>John D.</strong><br>
+                            <small>CEO, Agence Web Dev</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Testimonials Section -->
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Parlez-nous de vos projets.</h2>
+            </div>
+            <div class="contact-container">
+                <form>
+                    <div class="form-group">
+                        <label>Nom complet</label>
+                        <input type="text" placeholder="Ex: Joe Kalala" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email professionnel</label>
+                        <input type="email" placeholder="joe@entreprise.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea rows="6" placeholder="Décrivez vos besoins ou posez votre question..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la demande</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- End of Contact Section -->
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p>© 2026 TaskFlow Inc. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

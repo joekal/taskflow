@@ -1,290 +1,666 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portail de Choix de Projets | Licence Informatique</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>TaskFlow | L'IA au service de votre productivité | Design Sombre</title>
+
+    <!-- Font Awesome and Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-body: #0a0e17; /* Fond sombre profond */
+            --bg-card: #151b29;  /* Fond des cartes légèrement plus clair */
+            --border: #232d41;  /* Couleur des bordures subtiles */
+            --text-main: #e2e8f0; /* Texte clair principal */
+            --text-muted: #94a3b8; /* Texte atténué */
+            
+            --primary: #3b82f6; /* Bleu vibrant */
+            --primary-dark: #1d4ed8;
+            --secondary: #a855f7; /* Violet pour le dégradé */
+            --white: #ffffff;
+            
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        ul { 
+            list-style: none; 
+        }
+        a { 
+            text-decoration: none; 
+            color: inherit; 
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            border-radius: 50px; /* Boutons plus arrondis */
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            /* Fond en dégradé ultra-vibrant */
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: #ffffff;
+            
+            /* L'effet "Allumé" : une ombre portée colorée et douce */
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+            
+            /* Une bordure très fine et claire pour détacher le bouton du fond noir */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-primary:hover {
+            /* Au survol, on augmente l'intensité lumineuse */
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.7);
+            transform: translateY(-4px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Effet de brillance (Glossy) qui passe sur le bouton au hover */
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn-primary:hover::after {
+            left: 120%;
+        }
+
+        section, header {
+            padding: 100px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- EFFET DE PARTICULES CSS --- */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-around 20s infinite linear;
+        }
+
+        @keyframes float-around {
+            0% { transform: translateY(0) translateX(0) scale(1); }
+            50% { transform: translateY(-50vh) translateX(50vw) scale(1.2); }
+            100% { transform: translateY(-100vh) translateX(-50vw) scale(1); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 23, 0.85); /* Fond transparent pour effet blur */
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 160px 0 120px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 strong {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 50px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- FEATURES --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            padding: 50px;
+            border-radius: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: var(--white);
+        }
+
+        /* --- PRICING --- */
+        .pricing {
+            background-color: rgba(21, 27, 41, 0.3);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            align-items: center;
+        }
+
+        .price-card {
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .price-card:hover {
+            transform: scale(1.03);
+        }
+
+        .price-card.popular {
+            border-color: var(--secondary);
+            transform: scale(1.08);
+            position: relative;
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .badge {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .price-val {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--white);
+            margin: 25px 0;
+            letter-spacing: -2px;
+        }
+
+        .price-val span {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .price-card ul {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .price-card li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+        }
+
+        .price-card li i { color: #10b981; }
+
+        /* --- TESTIMONIALS --- */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            font-style: italic;
+            transition: var(--transition);
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--text-muted);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 25px;
+            font-style: normal;
+        }
+
+        .user-info img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+        }
+
+        .stars { color: #f59e0b; margin-bottom: 15px; font-size: 1.1rem; }
+
+        /* --- CONTACT --- */
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 60px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background-color: var(--bg-body);
+            color: var(--white);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: rgba(10, 14, 23, 0.95);
+            color: var(--text-muted);
+            padding: 60px 0 30px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 10;
+        }
+
+        .social-links {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .social-links a {
+            font-size: 1.8rem;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .social-links a:hover {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .price-card.popular { transform: scale(1.02); }
+            .hero h1 { font-size: 4rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            section { padding: 70px 0; }
+            .section-title h2 { font-size: 2.5rem; }
+            .price-card.popular { transform: scale(1); }
+            .hero h1 { font-size: 3rem; }
+            .feature-card, .price-card, .testimonial-card { padding: 30px; }
+            .contact-container { padding: 30px; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body>
 
-    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white py-16 px-4 shadow-xl">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider text-blue-200 uppercase bg-blue-800 bg-opacity-50 rounded-full">
-                Session Académique 2024-2025
+    <div class="particles-bg">
+        <div class="particle" style="width: 50px; height: 50px; top: 20%; left: 10%; animation-duration: 25s;"></div>
+        <div class="particle" style="width: 80px; height: 80px; top: 60%; left: 80%; animation-duration: 18s;"></div>
+        <div class="particle" style="width: 30px; height: 30px; top: 80%; left: 30%; animation-duration: 22s;"></div>
+        <div class="particle" style="width: 60px; height: 60px; top: 10%; left: 70%; animation-duration: 30s;"></div>
+        <div class="particle" style="width: 100px; height: 100px; top: 50%; left: 50%; animation-duration: 28s;"></div>
+    </div>
+
+    <nav>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <a href="#" class="logo">
+                <i class="fas fa-layer-group"></i> TaskFlow
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#testimonials">Avis</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#pricing" class="btn btn-primary">Essai Gratuit</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1>L'Intelligence Artificielle au service de votre <strong>Productivité</strong>.</h1>
+            <p>TaskFlow simplifie la gestion de projets pour les freelances et petites équipes. Boostez votre efficacité grâce à la priorisation automatique par l'IA.</p>
+            <div class="hero-btns">
+                <a href="#pricing" class="btn btn-primary">Commencer gratuitement</a>
             </div>
-            <button id="adminBtn" class="ml-3 mb-6 inline-block px-3 py-1 rounded border border-white/30 text-white text-sm bg-white/5">Admin</button>
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-                Portail de Choix de Projets <br>
-                <span class="text-blue-400">Licence Informatique</span>
-            </h1>
-            <p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
-                Parcourez les 30 projets innovants, sélectionnez votre préféré et recevez instantanément sa fiche complète sur WhatsApp.
-            </p>
         </div>
     </header>
+    <!-- End of Hero Section -->
 
-    <main class="max-w-4xl mx-auto px-4 -mt-10 pb-20">
-        
-        <section class="glass-effect rounded-3xl shadow-2xl p-6 md:p-10 border border-white">
-            
-            <div class="mb-10">
-                <label for="projectSelect" class="block text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">
-                    1. Choisissez votre sujet
-                </label>
-                <div class="relative group">
-                    <select id="projectSelect" 
-                        class="w-full h-16 pl-6 pr-12 text-lg bg-white border-2 border-slate-200 rounded-2xl appearance-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 transition-all cursor-pointer outline-none">
-                        <option value="" disabled selected>-- Sélectionnez un projet parmi les 30 options --</option>
-                    </select>
-                    <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                        <i class="fas fa-chevron-down text-xl"></i>
-                    </div>
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Outils Intelligents, Workflow Zen.</h2>
+                <p>Concentrez-vous sur votre métier, TaskFlow s'occupe de l'organisation.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot feature-icon"></i>
+                    <h3>Organisation Automatisée</h3>
+                    <p>Notre IA analyse vos échéances et priorise vos tâches pour maximiser votre productivité au quotidien.</p>
                 </div>
-                <div id="selectionBadge" class="hidden mt-3 flex items-center gap-2 text-green-600 font-medium animate-fade-in">
-                    <i class="fas fa-check-circle"></i> <span>Projet sélectionné avec succès</span>
+                <div class="feature-card">
+                    <i class="fas fa-brain feature-icon"></i>
+                    <h3>Analyses Prédictives</h3>
+                    <p>Identifiez les goulots d'étranglement et anticipez les retards de vos projets avant qu'ils ne surviennent.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bolt feature-icon"></i>
+                    <h3>Collaboration Temps Réel</h3>
+                    <p>Fluidifiez la communication d'équipe avec un partage de documents et un chat intégré à vos projets.</p>
                 </div>
             </div>
+        </div>
+    </section>
+    <!-- End of Features Section -->
 
-            <div id="projectDetails" class="mb-12">
-                <div class="border-2 border-dashed border-slate-200 rounded-3xl p-10 text-center text-slate-400">
-                    <i class="fas fa-project-diagram text-5xl mb-4 opacity-20"></i>
-                    <p class="text-lg">Veuillez sélectionner un projet dans la liste pour voir les détails ici.</p>
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Tarifs Simples, Aucune Surprise.</h2>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Gratuit</h3>
+                    <div class="price-val">0$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Jusqu'à 3 projets</li>
+                        <li><i class="fas fa-check"></i> 2 membres d'équipe</li>
+                        <li><i class="fas fa-check"></i> Tableaux de bord basiques</li>
+                        <li><i class="fas fa-check"></i> Stockage 1 Go</li>
+                    </ul>
+                    <button  class="btn" style="border: 1px solid var(--border); color: var(--text-muted); width: 100%;">Choisir ce plan</button>
+                </div>
+                <div class="price-card popular">
+                    <div class="badge">Recommandé</div>
+                    <h3>Pro</h3>
+                    <div class="price-val">19$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Projets illimités</li>
+                        <li><i class="fas fa-check"></i> Priorisation par IA</li>
+                        <li><i class="fas fa-check"></i> Rapports avancés</li>
+                        <li><i class="fas fa-check"></i> Stockage 10 Go</li>
+                        <li><i class="fas fa-check"></i> Support 24/7</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;">S'abonner maintenant</button>
+                </div>
+                <div class="price-card">
+                    <h3>Entreprise</h3>
+                    <div class="price-val">49$<span>/mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Tout du plan Pro</li>
+                        <li><i class="fas fa-check"></i> Membres illimités</li>
+                        <li><i class="fas fa-check"></i> Support prioritaire</li>
+                        <li><i class="fas fa-check"></i> Stockage 100 Go</li>
+                        <li><i class="fas fa-check"></i> Intégration API</li>
+                    </ul>
+                    <button class="btn" style="border: 1px solid var(--border); color: var(--text-muted); width: 100%;">Contacter la vente</button>
                 </div>
             </div>
+        </div>
+    </section>
+    <!-- End of Pricing Section -->
 
-            <hr class="border-slate-100 mb-12">
-
-            <div id="formSection" class="opacity-50 pointer-events-none transition-all duration-500">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest mb-6">2. Coordonnées de réception</h3>
-                <form id="selectionForm" class="space-y-6">
-                    <div class="relative">
-                        <label class="block text-sm font-medium text-slate-600 mb-2">Votre numéro WhatsApp</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-slate-400">
-                                <i class="fab fa-whatsapp text-xl"></i>
-                            </span>
-                            <input type="text" id="phoneInput" required
-                                class="w-full py-4 pl-14 pr-6 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-green-500/10 focus:border-green-500 transition-all outline-none text-lg"
-                                placeholder="ex: +33 6 12 34 56 78">
+    <!-- Testimonials Section -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Leurs projets, boostés par TaskFlow.</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"TaskFlow est une révélation ! L'IA m'aide à prioriser mes tâches, ce qui m'a fait gagner 5 heures par semaine."</p>
+                    <div class="user-info">
+                        <img src="https://i.pravatar.cc/150?u=joe" alt="Joe">
+                        <div>
+                            <strong>Joe K.</strong><br>
+                            <small>Freelance Developer</small>
                         </div>
-                        <p id="errorMsg" class="hidden mt-2 text-sm text-red-500 font-medium"></p>
                     </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Indispensable pour notre petite agence. La gestion de projets est fluide et l'analyse prédictive nous évite bien des soucis."</p>
+                    <div class="user-info">
+                        <img src="https://i.pravatar.cc/150?u=john" alt="John">
+                        <div>
+                            <strong>John D.</strong><br>
+                            <small>CEO, Agence Web Dev</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Testimonials Section -->
 
-                    <button type="submit" 
-                        class="w-full py-5 bg-green-600 hover:bg-green-700 text-white font-bold text-xl rounded-2xl shadow-lg shadow-green-200 transform hover:-translate-y-1 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                        <i class="fas fa-paper-plane"></i>
-                        Recevoir la fiche du projet
-                    </button>
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Parlez-nous de vos projets.</h2>
+            </div>
+            <div class="contact-container">
+                <form>
+                    <div class="form-group">
+                        <label>Nom complet</label>
+                        <input type="text" placeholder="Ex: Joe Kalala" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email professionnel</label>
+                        <input type="email" placeholder="joe@entreprise.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea rows="6" placeholder="Décrivez vos besoins ou posez votre question..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la demande</button>
                 </form>
             </div>
+        </div>
+    </section>
+    <!-- End of Contact Section -->
 
-            <div id="successMessage" class="hidden transform transition-all duration-500 scale-95 opacity-0">
-                <div class="bg-green-50 border-2 border-green-200 rounded-3xl p-8 text-center">
-                    <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-green-800 mb-2">Demande envoyée !</h2>
-                    <p id="confirmationText" class="text-green-700 mb-8 leading-relaxed"></p>
-                    <button onclick="resetApp()" class="px-8 py-3 bg-white border border-green-200 text-green-700 font-semibold rounded-xl hover:bg-green-100 transition-colors">
-                        Faire un autre choix
-                    </button>
-                </div>
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
-
-        </section>
-    </main>
-
-    <footer class="text-center pb-10 text-slate-400 text-sm">
-        &copy; 2024 Faculté des Sciences - Département Informatique
+            <p>© 2026 TaskFlow Inc. Tous droits réservés.</p>
+        </div>
     </footer>
 
-    <script>
-        // Données des 30 projets (remplacées selon la demande)
-        const projects = [
-            { id:1, name:"Système intelligent de gestion des emplois du temps universitaires", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Plateforme permettant aux étudiants de créer, visualiser et optimiser leur emploi du temps en évitant les conflits de cours. Le système aide à mieux gérer le temps académique. Défis techniques : modèles relationnels (cours, horaires, utilisateurs), contraintes d’unicité, validation côté Django Forms, authentification." },
-            { id:2, name:"Application de suivi des projets académiques individuels", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Outil permettant à un étudiant de découper son projet en tâches, sous-tâches et jalons avec suivi de progression. Défis techniques : CRUD complet avec Class-Based Views, relations hiérarchiques en BDD, gestion des statuts." },
-            { id:3, name:"Système de gestion des rendez-vous enseignants-étudiants", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Plateforme pour réserver des créneaux de consultation académique sans conflits horaires. Défis techniques : gestion des sessions, logique de réservation, contraintes temporelles en base de données." },
-            { id:4, name:"Application de suivi de présence numérique pour étudiants", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Système permettant l’enregistrement et la consultation de la présence aux cours. Défis techniques : modèles liés (cours, présences), permissions utilisateurs, filtres et recherches." },
-            { id:5, name:"Gestionnaire intelligent de deadlines académiques", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Centralisation des échéances (TP, examens, projets) avec alertes visuelles. Défis techniques : gestion des dates, requêtes filtrées, logique métier Django." },
-            { id:6, name:"Système de gestion de clubs universitaires", category:"Catégorie 1 — Gestion & Organisation Intelligente", description:"Plateforme pour gérer les membres, activités et événements d’un club étudiant. Défis techniques : relations many-to-many, rôles utilisateurs, dashboard simple." },
-            { id:7, name:"Plateforme de quiz adaptatifs pour étudiants débutants", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Le système ajuste la difficulté des questions selon les résultats précédents. Défis techniques : logique conditionnelle Django, scoring, modèles liés (quiz, réponses)." },
-            { id:8, name:"Gestionnaire de fiches de révision numériques", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Création et organisation de fiches de révision par matière. Défis techniques : CRUD, recherche textuelle, pagination." },
-            { id:9, name:"Plateforme d’auto-évaluation académique", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Les étudiants évaluent leurs compétences par matière et visualisent leur progression. Défis techniques : calculs côté backend, modèles statistiques simples." },
-            { id:10, name:"Bibliothèque numérique académique simplifiée", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Gestion de documents pédagogiques classés par matière et niveau. Défis techniques : upload de fichiers, gestion des médias, permissions." },
-            { id:11, name:"Application de suivi de progression pédagogique", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Suivi des compétences acquises dans un cursus donné. Défis techniques : modèles normalisés, tableaux de bord." },
-            { id:12, name:"Système de gestion de tutorat étudiant", category:"Catégorie 2 — Éducation & Apprentissage Interactif", description:"Mise en relation entre tuteurs et tutorés selon les matières. Défis techniques : matching simple, authentification, rôles." },
-            { id:13, name:"Plateforme d’annonces universitaires locales", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Publication d’annonces (logement, événements, services). Défis techniques : modération simple, CRUD sécurisé." },
-            { id:14, name:"Réseau interne d’entraide académique", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Les étudiants posent des questions et reçoivent de l’aide. Défis techniques : système de commentaires, permissions." },
-            { id:15, name:"Système de gestion d’événements universitaires", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Création et inscription à des événements étudiants. Défis techniques : gestion des inscriptions, contraintes de capacité." },
-            { id:16, name:"Plateforme de partage de ressources entre étudiants", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Partage contrôlé de notes et documents. Défis techniques : gestion des fichiers, autorisations." },
-            { id:17, name:"Application de signalement de problèmes sur le campus", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Signalement d’incidents (salles, matériel). Défis techniques : formulaires avancés, statuts, suivi." },
-            { id:18, name:"Forum académique structuré par matières", category:"Catégorie 3 — Communauté & Vie Étudiante", description:"Discussion organisée autour des cours. Défis techniques : relations hiérarchiques, pagination." },
-            { id:19, name:"Tableau de bord de performance académique personnelle", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Visualisation des notes et tendances. Défis techniques : calculs backend, requêtes agrégées." },
-            { id:20, name:"Système de suivi des dépenses étudiantes", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Analyse des dépenses mensuelles. Défis techniques : modèles financiers simples, filtres par date." },
-            { id:21, name:"Plateforme de suivi de consommation énergétique simulée", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Simulation de consommation dans un bâtiment universitaire. Défis techniques : données temporelles, statistiques simples." },
-            { id:22, name:"Suivi d’utilisation des salles de classe", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Analyse de l’occupation des salles. Défis techniques : requêtes conditionnelles, logique métier." },
-            { id:23, name:"Gestionnaire de statistiques de fréquentation d’événements", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Analyse des participations. Défis techniques : agrégation, filtres dynamiques." },
-            { id:24, name:"Application de suivi de lectures académiques", category:"Catégorie 4 — Analyse & Suivi de Données", description:"Statistiques de lecture personnelle. Défis techniques : relations utilisateur-contenu." },
-            { id:25, name:"Simulateur de gestion d’un département universitaire", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Gestion fictive des ressources académiques. Défis techniques : règles métiers, relations complexes." },
-            { id:26, name:"Générateur de planning d’examens", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Création automatique de planning sans conflits. Défis techniques : algorithme simple, validation." },
-            { id:27, name:"Simulateur de gestion de bibliothèque universitaire", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Gestion des prêts et retours. Défis techniques : contraintes d’intégrité, transactions." },
-            { id:28, name:"Outil de création de CV académique en ligne", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Génération structurée de CV étudiant. Défis techniques : formulaires complexes, templates." },
-            { id:29, name:"Système de gestion de laboratoire pédagogique", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Suivi du matériel et des réservations. Défis techniques : inventaire, statuts." },
-            { id:30, name:"Plateforme de simulation de choix de parcours académique", category:"Catégorie 5 — Outils Créatifs & Simulation", description:"Aide à la décision selon les intérêts. Défis techniques : logique conditionnelle, scoring." }
-        ];
-
-        const selectEl = document.getElementById('projectSelect');
-        const detailsEl = document.getElementById('projectDetails');
-        const formSection = document.getElementById('formSection');
-        const badge = document.getElementById('selectionBadge');
-        const phoneInput = document.getElementById('phoneInput');
-        const errorMsg = document.getElementById('errorMsg');
-
-        // Populate Select
-        projects.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = `${p.id}. ${p.name}`;
-            selectEl.appendChild(opt);
-        });
-
-        // --- Admin / Submissions support ---
-        const DEFAULT_ADMIN_PASSWORD = 'admin2024!';
-        async function sha256Hex(str) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        (async () => {
-            if (!localStorage.getItem('adminPasswordHash')) {
-                const h = await sha256Hex(DEFAULT_ADMIN_PASSWORD);
-                localStorage.setItem('adminPasswordHash', h);
-            }
-        })();
-
-        function saveSubmission_n(project, phone) {
-            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
-            submissions.push({ projectId: project.id, projectName: project.name, phone, timestamp: new Date().toISOString() });
-            localStorage.setItem('submissions', JSON.stringify(submissions));
-        }
-
-        // Admin modal (inject simple modal)
-        const adminModalHtml = `
-            <div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                <div class="bg-white rounded-xl p-6 w-[90%] max-w-md">
-                    <h3 class="text-lg font-semibold mb-3">Accès administrateur</h3>
-                    <label class="text-sm text-gray-600">Mot de passe</label>
-                    <input id="adminPasswordInput" type="password" class="w-full mt-2 mb-3 p-3 border rounded" />
-                    <div class="flex justify-end gap-3">
-                        <button id="adminCancel" class="px-4 py-2 rounded border">Annuler</button>
-                        <button id="adminPasswordSubmit" class="px-4 py-2 rounded bg-green-600 text-white">Valider</button>
-                    </div>
-                </div>
-            </div>`;
-        document.body.insertAdjacentHTML('beforeend', adminModalHtml);
-
-        document.getElementById('adminBtn').addEventListener('click', () => {
-            document.getElementById('adminModal').classList.remove('hidden');
-            document.getElementById('adminPasswordInput').value = DEFAULT_ADMIN_PASSWORD;
-        });
-
-        document.getElementById('adminCancel').addEventListener('click', () => {
-            document.getElementById('adminModal').classList.add('hidden');
-        });
-
-        document.getElementById('adminPasswordSubmit').addEventListener('click', async () => {
-            const entered = document.getElementById('adminPasswordInput').value || '';
-            const h = await sha256Hex(entered);
-            if (h === localStorage.getItem('adminPasswordHash')) {
-                location.href = 'submissions.html';
-            } else {
-                alert('Mot de passe invalide');
-            }
-        });
-
-        // Selection Change Handler
-        selectEl.addEventListener('change', (e) => {
-            const project = projects.find(p => p.id == e.target.value);
-            
-            // Visual Updates
-            selectEl.classList.add('border-green-500', 'bg-green-50');
-            badge.classList.remove('hidden');
-            formSection.classList.remove('opacity-50', 'pointer-events-none');
-
-            // Update Card
-            detailsEl.innerHTML = `
-                <div class="bg-white border-2 border-blue-100 rounded-3xl p-8 shadow-sm animate-fade-in">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                        <span class="px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                            ${project.category}
-                        </span>
-                        <span class="text-slate-400 text-sm font-mono">ID: #PROJ-${project.id.toString().padStart(3, '0')}</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4">${project.name}</h2>
-                    <p class="text-slate-600 leading-relaxed text-lg">${project.description}</p>
-                </div>
-            `;
-            
-            detailsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        });
-
-        // Form Submission
-        document.getElementById('selectionForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const phone = phoneInput.value.trim();
-            const phoneRegex = /^\+?[0-9]{10,15}$/;
-
-            if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-                errorMsg.textContent = "Format invalide. Utilisez un format international (ex: +336...)";
-                errorMsg.classList.remove('hidden');
-                phoneInput.classList.add('border-red-500');
-                return;
-            }
-
-            const project = projects.find(p => p.id == selectEl.value);
-            // save submission
-            saveSubmission_n(project, phone);
-            showSuccess(project.name, phone);
-        });
-
-        function showSuccess(projectName, phone) {
-            formSection.classList.add('hidden');
-            document.getElementById('projectDetails').classList.add('hidden');
-            document.querySelector('label[for="projectSelect"]').parentElement.classList.add('hidden');
-            
-            const successBox = document.getElementById('successMessage');
-            successBox.classList.remove('hidden');
-            setTimeout(() => {
-                successBox.classList.remove('scale-95', 'opacity-0');
-                successBox.classList.add('scale-100', 'opacity-100');
-            }, 10);
-
-            document.getElementById('confirmationText').innerHTML = 
-                `La fiche détaillée du projet <strong>"${projectName}"</strong> sera envoyée au <strong>${phone}</strong> via WhatsApp dans quelques instants.`;
-        }
-
-        function resetApp() {
-            location.reload();
-        }
-    </script>
-
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-    </style>
 </body>
 </html>
